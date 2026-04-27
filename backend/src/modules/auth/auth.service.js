@@ -16,9 +16,13 @@ import {
 const hashToken = (token) =>
   crypto.createHash("sha256").update(token).digest("hex");
 
-const register = async ({ name, email, password, role }) => {
+const register = async ({ name, email, password, role, termsAccepted, country }) => {
   const existing = await User.findOne({ email });
   if (existing) throw ApiError.conflict("Email already registered");
+
+  if (!termsAccepted) {
+    throw ApiError.badRequest("You must accept the terms to register");
+  }
 
   const { rawToken, hashedToken } = generateResetToken();
 
@@ -27,6 +31,8 @@ const register = async ({ name, email, password, role }) => {
     email,
     password,
     role,
+    termsAcceptedAt: new Date(),
+    country: country ? String(country).toUpperCase().slice(0, 2) : "",
     verificationToken: hashedToken,
   });
 

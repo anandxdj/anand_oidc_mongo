@@ -13,6 +13,8 @@ class RegisterDto extends BaseDto {
       )
       .required(),
     role: Joi.string().valid("customer", "seller").default("customer"),
+    termsAccepted: Joi.boolean().valid(true).required(),
+    country: Joi.string().trim().length(2).uppercase().allow("").optional(),
   });
 }
 

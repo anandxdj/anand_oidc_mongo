@@ -32,6 +32,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    termsAcceptedAt: { type: Date },
+    country: {
+      type: String,
+      trim: true,
+      maxlength: 2,
+      default: "",
+    },
     verificationToken: { type: String, select: false },
     refreshToken: { type: String, select: false },
     resetPasswordToken: { type: String, select: false },

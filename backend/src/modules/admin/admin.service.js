@@ -38,6 +38,7 @@ const listAllClients = async () => {
   return OAuthClient.find()
     .select("-clientSecretHash")
     .populate("ownerId", "email name")
+    .populate("projectId", "name isDefault")
     .sort({ createdAt: -1 })
     .lean();
 };
@@ -46,6 +47,7 @@ const getClientByIdAdmin = async (clientId) => {
   const c = await OAuthClient.findOne({ clientId })
     .select("-clientSecretHash")
     .populate("ownerId", "email name")
+    .populate("projectId", "name isDefault")
     .lean();
   if (!c) throw ApiError.notFound("Client not found");
   return c;

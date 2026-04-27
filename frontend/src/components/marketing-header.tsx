@@ -3,14 +3,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const nav = [
-  { href: "/login", label: "Login" },
-  { href: "/register", label: "Register" },
-  { href: "/developer", label: "Developer" },
-  { href: "/admin", label: "Admin" },
-] as const;
-
-export function SiteHeader() {
+export function MarketingHeader() {
   return (
     <header className="sticky top-0 z-40 flex justify-center px-4 pt-4 pb-2">
       <nav
@@ -27,18 +20,24 @@ export function SiteHeader() {
           className="hidden h-5 w-px shrink-0 bg-border sm:block"
           aria-hidden
         />
-        {nav.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "sm" }),
-              "rounded-full px-3 no-underline"
-            )}
-          >
-            {item.label}
-          </Link>
-        ))}
+        <Link
+          href="/login"
+          className={cn(
+            buttonVariants({ variant: "ghost", size: "sm" }),
+            "rounded-full px-3 no-underline",
+          )}
+        >
+          Sign in
+        </Link>
+        <Link
+          href="/register"
+          className={cn(
+            buttonVariants({ variant: "default", size: "sm" }),
+            "rounded-full px-3 no-underline",
+          )}
+        >
+          Create account
+        </Link>
       </nav>
     </header>
   );

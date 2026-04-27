@@ -24,9 +24,21 @@ const oauthClientSchema = new mongoose.Schema(
       required: true,
       validate: [(v) => Array.isArray(v) && v.length > 0, "At least one redirect URI"],
     },
+    projectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
+      required: true,
+      index: true,
+    },
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+      index: true,
+    },
+    projectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Project",
       required: true,
       index: true,
     },

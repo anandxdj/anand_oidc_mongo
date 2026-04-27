@@ -4,7 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import ApiError from "./common/utils/api-error.js";
 import authRoute from "./modules/auth/auth.routes.js";
-import oauthClientRoutes from "./modules/oauth-client/oauth-client.routes.js";
+import projectRoutes from "./modules/project/project.routes.js";
 import oauthApiRoutes from "./modules/oauth/oauth-api.routes.js";
 import oauthRoutes from "./modules/oauth/oauth.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
@@ -35,7 +35,7 @@ app.get("/.well-known/openid-configuration", getOpenIdConfiguration);
 
 app.use("/api/auth", authRoute);
 app.use("/api/oauth", oauthApiRoutes);
-app.use("/api/clients", oauthClientRoutes);
+app.use("/api/projects", projectRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/oauth", oauthRoutes);
 
