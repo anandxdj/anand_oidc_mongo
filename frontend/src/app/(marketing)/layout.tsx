@@ -1,4 +1,5 @@
-import { MarketingHeader } from "@/components/marketing-header";
+import { MarketingFloatingNav } from "@/components/marketing-floating-nav";
+import { MarketingFooter } from "@/components/marketing-footer";
 
 export default function MarketingLayout({
   children,
@@ -7,8 +8,9 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <MarketingHeader />
+      <MarketingFloatingNav />
       {children}
+      <MarketingFooter />
     </>
   );
 }

@@ -34,6 +34,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  if (pathname === "/console" || pathname.startsWith("/console/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/console/, "/projects") || "/projects";
+    return NextResponse.redirect(url);
+  }
+
   if (isPublicPath(pathname) || isStaticAsset(pathname)) {
     return NextResponse.next();
   }

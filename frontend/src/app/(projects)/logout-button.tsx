@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -50,14 +51,18 @@ export function ProjectsLogoutButton() {
         }
       />
       <DropdownMenuContent align="start" className="w-(--anchor-width) min-w-48">
-        <DropdownMenuLabel className="font-normal text-muted-foreground">
-          Signed in
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal text-muted-foreground">
+            Signed in
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="destructive" onClick={() => void logout()}>
-          <LogOut className="size-4" aria-hidden />
-          Sign out
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem variant="destructive" onClick={() => void logout()}>
+            <LogOut className="size-4" aria-hidden />
+            Sign out
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
