@@ -36,12 +36,6 @@ const oauthClientSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    projectId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
-      required: true,
-      index: true,
-    },
     description: {
       type: String,
       trim: true,

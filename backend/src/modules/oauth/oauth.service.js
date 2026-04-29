@@ -100,7 +100,8 @@ export const getAuthorize = async (req) => {
   }
 
   if (!req.user) {
-    const returnTo = `${getOidcIssuer()}${req.url}`;
+    // Use originalUrl so the mount prefix (/oauth) is preserved.
+    const returnTo = `${getOidcIssuer()}${req.originalUrl}`;
     return {
       type: "redirect",
       status: 302,

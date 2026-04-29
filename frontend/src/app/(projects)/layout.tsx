@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { ProjectsLogoutButton } from "./logout-button";
 import { buttonVariants } from "@/components/ui/button";
+import { fetchApi } from "@/lib/server-api";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -9,11 +10,26 @@ const nav = [
   { href: "/projects/new", label: "New project" },
 ] as const;
 
-export default function ProjectsConsoleLayout({
+export default async function ProjectsConsoleLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  let showAdminDashboard = false;
+  try {
+    const res = await fetchApi("/api/auth/me");
+    if (res.ok) {
+      const json = (await res.json()) as { data?: { role?: string } };
+      showAdminDashboard = json.data?.role === "admin";
+    }
+  } catch {
+    showAdminDashboard = false;
+  }
+
+  const navItems = showAdminDashboard
+    ? [...nav, { href: "/admin", label: "Admin Dashboard" }]
+    : nav;
+
   return (
     <div className="flex min-h-full flex-col md:flex-row">
       <aside className="border-b border-border bg-card/60 px-4 py-6 md:w-56 md:border-b-0 md:border-e">
@@ -24,7 +40,7 @@ export default function ProjectsConsoleLayout({
           Console
         </Link>
         <nav className="mt-6 flex flex-col gap-1" aria-label="Console">
-          {nav.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

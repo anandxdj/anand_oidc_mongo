@@ -5,6 +5,7 @@ import { initOidcKeys } from "./src/common/utils/keys.utils.js"
 import { backfillDefaultProjects } from "./src/modules/project/project.service.js"
 
 const PORT = process.env.PORT || 5000
+const RETRY_DELAY_MS = Number(process.env.STARTUP_RETRY_DELAY_MS || 5000)
 
 const start = async () => {
     await connectDB()
@@ -27,6 +28,19 @@ const start = async () => {
 
 start().catch((err) => {
     console.error("Failed to start server", err)
+
+    if (process.env.NODE_ENV === "development") {
+        console.log(
+            `[startup] Retrying in ${RETRY_DELAY_MS}ms (set STARTUP_RETRY_DELAY_MS to customize)`,
+        )
+        setTimeout(() => {
+            start().catch((retryErr) => {
+                console.error("Retry startup failed", retryErr)
+            })
+        }, RETRY_DELAY_MS)
+        return
+    }
+
     process.exit(1)
 })
 

@@ -10,3 +10,6 @@ package-lock.json
 pnpm-lock.yaml
 .cursor
 .cursor*
+.agents
+.claude
+.windsurf
