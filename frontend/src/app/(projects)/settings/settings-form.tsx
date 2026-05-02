@@ -144,7 +144,7 @@ export function SettingsForm({ user }: { user: UserProfile }) {
               <Textarea
                 id="profile-bio"
                 placeholder="A short biography..."
-                className="min-h-[100px] resize-none"
+                className="min-h-25 resize-none"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 disabled={loading}

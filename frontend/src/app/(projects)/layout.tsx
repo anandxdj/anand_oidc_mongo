@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const nav = [
   { href: "/projects", label: "All projects" },
   { href: "/projects/new", label: "New project" },
-  { href: "/settings", label: "Profile Settings" },
+  { href: "/user/profile", label: "Profile" },
 ] as const;
 
 export default async function ProjectsConsoleLayout({
@@ -16,20 +16,26 @@ export default async function ProjectsConsoleLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let showAdminDashboard = false;
+  let role = "";
   try {
     const res = await fetchApi("/api/auth/me");
     if (res.ok) {
       const json = (await res.json()) as { data?: { role?: string } };
-      showAdminDashboard = json.data?.role === "admin";
+      role = json.data?.role || "";
     }
   } catch {
-    showAdminDashboard = false;
+    role = "";
   }
 
-  const navItems = showAdminDashboard
-    ? [...nav, { href: "/admin", label: "Admin Dashboard" }]
-    : nav;
+  const hasAdminAccess = role === "admin" || role === "superadmin";
+  const hasSuperadminAccess = role === "superadmin";
+  const navItems = [
+    ...nav,
+    ...(hasAdminAccess ? [{ href: "/admin", label: "Admin Dashboard" }] : []),
+    ...(hasSuperadminAccess
+      ? [{ href: "/superadmin", label: "Super Admin Panel" }]
+      : []),
+  ];
 
   return (
     <div className="flex min-h-full flex-col md:flex-row">

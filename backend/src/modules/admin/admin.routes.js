@@ -6,7 +6,7 @@ import * as ctrl from "./admin.controller.js";
 
 const router = Router();
 
-router.use(authenticate, authorize("admin"));
+router.use(authenticate, authorize("admin", "superadmin"));
 
 router.get("/stats", ctrl.stats);
 router.get("/apps", ctrl.listApps);

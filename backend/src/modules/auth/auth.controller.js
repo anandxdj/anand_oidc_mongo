@@ -1,6 +1,17 @@
 import * as authService from "./auth.service.js";
 import ApiResponse from "../../common/utils/api-response.js";
 
+const readClientIp = (req) => {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (typeof forwarded === "string" && forwarded.trim()) {
+    return forwarded.split(",")[0].trim();
+  }
+  if (Array.isArray(forwarded) && forwarded[0]) {
+    return String(forwarded[0]).trim();
+  }
+  return req.ip || req.socket?.remoteAddress || "";
+};
+
 const register = async (req, res) => {
   const user = await authService.register(req.body);
   ApiResponse.created(
@@ -18,7 +29,10 @@ const accessCookieOptions = {
 };
 
 const login = async (req, res) => {
-  const { user, accessToken, refreshToken } = await authService.login(req.body);
+  const { user, accessToken, refreshToken } = await authService.login(req.body, {
+    userAgent: req.headers["user-agent"],
+    ipAddress: readClientIp(req),
+  });
 
   // Refresh token goes in httpOnly cookie — not accessible to JS
   res.cookie("refreshToken", refreshToken, {
@@ -41,7 +55,7 @@ const refreshToken = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  await authService.logout(req.user.id);
+  await authService.logout(req.user.id, req.user.sessionId);
   res.clearCookie("refreshToken");
   res.clearCookie("accessToken", {
     httpOnly: true,
@@ -76,6 +90,31 @@ const updateProfile = async (req, res) => {
   ApiResponse.ok(res, "Profile updated successfully", user);
 };
 
+const listSessions = async (req, res) => {
+  const sessions = await authService.listSessions(req.user.id, req.user.sessionId);
+  ApiResponse.ok(res, "Active sessions", sessions);
+};
+
+const revokeSession = async (req, res) => {
+  const result = await authService.revokeSession(req.user.id, req.params.sessionId);
+  ApiResponse.ok(res, "Session revoked", result);
+};
+
+const listAuthorizedApps = async (req, res) => {
+  const apps = await authService.listAuthorizedApps(req.user.id);
+  ApiResponse.ok(res, "Authorized apps", apps);
+};
+
+const revokeAuthorizedApp = async (req, res) => {
+  const result = await authService.revokeAuthorizedApp(req.user.id, req.params.clientId);
+  ApiResponse.ok(res, "Consent revoked for this app", result);
+};
+
+const imagekitUploadAuth = async (req, res) => {
+  const auth = await authService.getImagekitUploadAuth(req.user.id);
+  ApiResponse.ok(res, "ImageKit upload auth", auth);
+};
+
 export {
   register,
   login,
@@ -86,4 +125,9 @@ export {
   resetPassword,
   getMe,
   updateProfile,
+  listSessions,
+  revokeSession,
+  listAuthorizedApps,
+  revokeAuthorizedApp,
+  imagekitUploadAuth,
 };

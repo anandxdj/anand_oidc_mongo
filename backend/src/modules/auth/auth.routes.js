@@ -26,5 +26,10 @@ router.put(
 );
 router.get("/me", authenticate, controller.getMe);
 router.put("/me", authenticate, controller.updateProfile);
+router.get("/sessions", authenticate, controller.listSessions);
+router.delete("/sessions/:sessionId", authenticate, controller.revokeSession);
+router.get("/authorized-apps", authenticate, controller.listAuthorizedApps);
+router.delete("/authorized-apps/:clientId", authenticate, controller.revokeAuthorizedApp);
+router.get("/imagekit/upload-auth", authenticate, controller.imagekitUploadAuth);
 
 export default router;

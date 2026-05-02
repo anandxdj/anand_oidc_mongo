@@ -3,6 +3,7 @@ import ApiError from "../../common/utils/api-error.js";
 import User from "../auth/auth.model.js";
 import OAuthClient from "../oauth-client/oauth-client.model.js";
 import Consent from "../oauth/consent.model.js";
+import redis from "../../common/config/redis.js";
 // import OAuthAccessToken from "../oauth/oauth-access-token.model.js";
 // import OAuthAudit from "../oauth/oauth-audit.model.js";
 
@@ -10,6 +11,19 @@ const startOfUtcDay = () => {
   const d = new Date();
   d.setUTCHours(0, 0, 0, 0);
   return d;
+};
+
+const utcDateKey = (date = new Date()) => date.toISOString().slice(0, 10).replace(/-/g, "");
+
+const countRedisKeys = async (pattern) => {
+  let cursor = "0";
+  let total = 0;
+  do {
+    const [nextCursor, keys] = await redis.scan(cursor, "MATCH", pattern, "COUNT", 500);
+    cursor = nextCursor;
+    total += keys.length;
+  } while (cursor !== "0");
+  return total;
 };
 
 const assertObjectId = (id, label = "id") => {
@@ -20,17 +34,18 @@ const assertObjectId = (id, label = "id") => {
 
 const getStats = async () => {
   const since = startOfUtcDay();
-  const [totalUsers, totalClients] = await Promise.all([
+  const dayCounterKey = `admin:auth_code_issued:${utcDateKey(since)}`;
+  const [totalUsers, totalClients, authCodesIssuedTodayRaw, activeAccessTokensApprox] = await Promise.all([
     User.countDocuments(),
     OAuthClient.countDocuments(),
-    // OAuthAudit.countDocuments({ event: "auth_code_issued", createdAt: { $gte: since } }),
-    // OAuthAccessToken.countDocuments({ expiresAt: { $gt: new Date() } }),
+    redis.get(dayCounterKey),
+    countRedisKeys("access_token:*"),
   ]);
   return {
     totalUsers,
     totalOAuthClients: totalClients,
-    authCodesIssuedToday: 0, // Placeholder
-    activeAccessTokensApprox: 0, // Placeholder
+    authCodesIssuedToday: Number(authCodesIssuedTodayRaw || 0),
+    activeAccessTokensApprox,
   };
 };
 

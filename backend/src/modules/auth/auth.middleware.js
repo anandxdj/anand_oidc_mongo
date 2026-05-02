@@ -34,8 +34,12 @@ const authenticate = async (req, res, next) => {
     throw ApiError.unauthorized("Session expired or invalid");
   }
 
-  // Check Redis Whitelist
-  const isWhitelisted = await redis.get(`session:${decoded.id}`);
+  const sessionRedisKey = decoded.sid
+    ? `session:${decoded.id}:${decoded.sid}`
+    : `session:${decoded.id}`;
+
+  // Check Redis whitelist for either scoped session key or legacy single-session key.
+  const isWhitelisted = await redis.get(sessionRedisKey);
   if (!isWhitelisted) {
     clearAuth();
     throw ApiError.unauthorized("Session expired or revoked");
@@ -49,6 +53,7 @@ const authenticate = async (req, res, next) => {
 
   req.user = {
     id: user._id,
+    sessionId: decoded.sid || null,
     role: user.role,
     name: user.name,
     email: user.email,
@@ -64,12 +69,16 @@ const tryAttachUser = async (req, res, next) => {
   if (!token) return next();
   try {
     const decoded = verifyAccessToken(token);
-    const isWhitelisted = await redis.get(`session:${decoded.id}`);
+    const sessionRedisKey = decoded.sid
+      ? `session:${decoded.id}:${decoded.sid}`
+      : `session:${decoded.id}`;
+    const isWhitelisted = await redis.get(sessionRedisKey);
     if (isWhitelisted) {
       const user = await User.findById(decoded.id);
       if (user) {
       req.user = {
         id: user._id,
+        sessionId: decoded.sid || null,
         role: user.role,
         name: user.name,
         email: user.email,

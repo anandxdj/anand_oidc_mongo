@@ -25,6 +25,8 @@ const hasScope = (scopeStr, needle) => {
   return s.includes(needle);
 };
 
+const utcDateKey = (date = new Date()) => date.toISOString().slice(0, 10).replace(/-/g, "");
+
 const validateAuthorizeQuery = (q) => {
   const {
     client_id: clientId,
@@ -69,7 +71,13 @@ const assertRedirect = (client, redirectUri) => {
 };
 
 const logAuthCodeIssued = async (userId, clientId) => {
-  // console.log(`[OAuthAudit] auth_code_issued for user=${userId} client=${clientId}`);
+  const dayKey = utcDateKey();
+  const redisKey = `admin:auth_code_issued:${dayKey}`;
+  const nextCount = await redis.incr(redisKey);
+  if (nextCount === 1) {
+    // Keep a short history for dashboard reads.
+    await redis.expire(redisKey, 60 * 60 * 24 * 3);
+  }
 };
 
 export const getAuthorize = async (req) => {

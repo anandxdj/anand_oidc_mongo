@@ -33,6 +33,7 @@ export default function AdminLayout({
   const [state, setState] = useState<
     "loading" | "ok" | "unauthenticated" | "not_admin" | "error"
   >("loading");
+  const [role, setRole] = useState<string>("");
 
   useEffect(() => {
     let cancelled = false;
@@ -51,7 +52,8 @@ export default function AdminLayout({
           success?: boolean;
           data?: { role?: string };
         };
-        if (json.data?.role === "admin") {
+        if (json.data?.role === "admin" || json.data?.role === "superadmin") {
+          if (!cancelled) setRole(json.data?.role || "");
           if (!cancelled) setState("ok");
         } else if (!cancelled) {
           setState("not_admin");
@@ -96,7 +98,8 @@ export default function AdminLayout({
             <CardTitle className="text-xl tracking-tight">Administrator sign-in</CardTitle>
             <CardDescription className="text-pretty">
               This area is restricted. Sign in with an account that has the{" "}
-              <span className="font-medium text-foreground">admin</span> role to continue.
+              <span className="font-medium text-foreground">admin</span> or{" "}
+              <span className="font-medium text-foreground">superadmin</span> role to continue.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -138,8 +141,9 @@ export default function AdminLayout({
             <CardTitle className="text-xl tracking-tight">Administrator access required</CardTitle>
             <CardDescription className="text-pretty">
               You&apos;re signed in, but this account does not have administrator privileges. Ask an
-              owner to grant the <span className="font-medium text-foreground">admin</span> role on
-              your user record.
+              owner to grant the <span className="font-medium text-foreground">admin</span> or{" "}
+              <span className="font-medium text-foreground">superadmin</span> role on your user
+              record.
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -214,7 +218,9 @@ export default function AdminLayout({
 
       <aside className="relative z-10 border-b border-border/80 bg-card/40 px-4 py-6 backdrop-blur-sm md:w-56 md:border-b-0 md:border-e md:border-border/80">
         <div className="flex items-center justify-between gap-2 md:block">
-          <span className="text-sm font-semibold tracking-tight text-foreground">Admin</span>
+          <span className="text-sm font-semibold tracking-tight text-foreground">
+            {role === "superadmin" ? "Admin (Superadmin)" : "Admin"}
+          </span>
           <Link
             href="/projects"
             className={cn(

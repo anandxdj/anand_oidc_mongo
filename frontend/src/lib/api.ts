@@ -27,6 +27,9 @@ export type UserProfile = {
   jobTitle?: string;
   company?: string;
   country?: string;
+  termsAcceptedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type ProjectRow = {
@@ -111,4 +114,23 @@ export type AdminAuthorizedAppsResponse = {
   userId: string;
   email: string;
   apps: AdminAuthorizedApp[];
+};
+
+export type UserSessionRow = {
+  id: string;
+  sessionKey: string;
+  userAgent?: string;
+  ipAddress?: string;
+  createdAt?: string;
+  lastSeenAt?: string;
+  isCurrent?: boolean;
+};
+
+export type UserAuthorizedAppRow = {
+  clientId: string;
+  clientName?: string;
+  logoUrl?: string;
+  scope?: string;
+  grantedAt?: string;
+  clientSuspended?: boolean;
 };

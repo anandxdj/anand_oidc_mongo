@@ -54,7 +54,7 @@ export default function HomePage() {
                 href="/login"
                 className={cn(
                   buttonVariants({ size: "lg" }),
-                  "min-w-[10rem] no-underline",
+                  "min-w-40 no-underline",
                 )}
               >
                 Sign in
@@ -63,7 +63,7 @@ export default function HomePage() {
                 href="/register"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "min-w-[10rem] no-underline",
+                  "min-w-40 no-underline",
                 )}
               >
                 Create account
@@ -75,7 +75,7 @@ export default function HomePage() {
 
       <section
         aria-labelledby="capabilities-heading"
-        className="border-t border-foreground/10 bg-gradient-to-b from-muted/30 to-background px-6 py-16 sm:py-20"
+        className="border-t border-foreground/10 bg-linear-to-b from-muted/30 to-background px-6 py-16 sm:py-20"
       >
         <div className="mx-auto w-full max-w-5xl">
           <div className="mb-10 max-w-2xl">
@@ -140,7 +140,7 @@ export default function HomePage() {
               href="/register"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "min-w-[10rem] no-underline",
+                "min-w-40 no-underline",
               )}
             >
               Create account
@@ -149,7 +149,7 @@ export default function HomePage() {
               href="/login"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "min-w-[10rem] no-underline",
+                "min-w-40 no-underline",
               )}
             >
               Sign in

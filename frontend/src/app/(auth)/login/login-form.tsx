@@ -121,6 +121,11 @@ export function LoginForm() {
       const json = (await res.json()) as {
         success?: boolean;
         message?: string;
+        data?: {
+          user?: {
+            role?: string;
+          };
+        };
       };
       if (!res.ok || json.success === false) {
         setFormError(json.message ?? "Sign in failed.");
@@ -139,7 +144,14 @@ export function LoginForm() {
         window.location.assign(appNext);
         return;
       }
-      router.push("/projects");
+      const role = json.data?.user?.role;
+      if (role === "superadmin") {
+        router.push("/superadmin");
+      } else if (role === "admin") {
+        router.push("/admin");
+      } else {
+        router.push("/user/profile");
+      }
       router.refresh();
     } catch {
       setFormError(
