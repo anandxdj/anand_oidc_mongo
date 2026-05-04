@@ -39,9 +39,9 @@ export default function HomePage() {
           <MarketingTopBar />
           <div className="flex flex-1 flex-col items-center justify-center gap-6 py-8 text-center sm:py-12">
             <h1 className="font-heading max-w-3xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
-              Ship{" "}
+              Ship With{" "}
               <Highlight className="text-foreground dark:text-foreground">
-                OIDC
+                Anand ID
               </Highlight>{" "}
               without wrestling the spec.
             </h1>

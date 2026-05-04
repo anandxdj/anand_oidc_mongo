@@ -14,7 +14,7 @@ let activeKid = "oidc-1";
 export const getOidcIssuer = () => {
   const fromEnv = process.env.OIDC_ISSUER?.replace(/\/$/, "");
   if (fromEnv) return fromEnv;
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT || 4000;
   return `http://localhost:${port}`;
 };
 

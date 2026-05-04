@@ -19,6 +19,9 @@ class ApiError extends Error {
   static forbidden(message = "forbidden") {
     return new ApiError(403, message);
   }
+  static serviceUnavailable(message = "Service unavailable") {
+    return new ApiError(503, message);
+  }
   static notfound(message = "notfound") {
     return new ApiError(404, message);
   }

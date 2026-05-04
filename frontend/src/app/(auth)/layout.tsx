@@ -12,7 +12,7 @@ export default function AuthLayout({
           href="/"
           className="text-sm font-semibold tracking-tight text-foreground no-underline hover:underline"
         >
-          OIDC
+          Anand ID
         </Link>
       </header>
       <div className="flex flex-1 flex-col">{children}</div>

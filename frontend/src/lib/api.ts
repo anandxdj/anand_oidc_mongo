@@ -4,7 +4,7 @@ export const UI_SESSION_COOKIE = "oidc_ui_session";
 export const UI_SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 7;
 
 export function getApiBaseUrl(): string {
-  const raw = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+  const raw = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
   return raw.replace(/\/$/, "");
 }
 

@@ -14,7 +14,7 @@ import {
   sendVerificationEmail,
   sendResetPasswordEmail,
 } from "../../common/config/email.js";
-import redis from "../../common/config/redis.js";
+import redis, { isRedisReady } from "../../common/config/redis.js";
 
 // Hash refresh token before storing — same approach as reset tokens
 const hashToken = (token) =>
@@ -25,10 +25,32 @@ const USER_SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
 const generateSessionKey = () => crypto.randomBytes(16).toString("hex");
 
+const SESSION_STORE_UNAVAILABLE =
+  "Session store is unavailable. Start Redis and try again.";
+
 const extractClientMetadata = (meta = {}) => ({
   userAgent: String(meta.userAgent || "").slice(0, 500),
   ipAddress: String(meta.ipAddress || "").slice(0, 100),
 });
+
+const ensureSessionStore = () => {
+  if (!isRedisReady()) {
+    throw ApiError.serviceUnavailable(SESSION_STORE_UNAVAILABLE);
+  }
+};
+
+const rememberSession = async (userId, sessionKey) => {
+  ensureSessionStore();
+  try {
+    const pipeline = redis.pipeline();
+    pipeline.set(`session:${userId}:${sessionKey}`, "1", "EX", USER_SESSION_TTL_SECONDS);
+    pipeline.set(`session:${userId}`, "1", "EX", USER_SESSION_TTL_SECONDS);
+    await pipeline.exec();
+  } catch (err) {
+    console.error("[Redis] Failed to store login session:", err.message);
+    throw ApiError.serviceUnavailable(SESSION_STORE_UNAVAILABLE);
+  }
+};
 
 const register = async ({ name, email, password, role, termsAccepted, country }) => {
   const existing = await User.findOne({ email });
@@ -84,6 +106,8 @@ const login = async ({ email, password }, sessionMeta = {}) => {
     throw ApiError.forbidden("Please verify your email before logging in");
   }
 
+  ensureSessionStore();
+
   const sessionKey = generateSessionKey();
   const accessToken = generateAccessToken({ id: user._id, role: user.role, sid: sessionKey });
   const refreshToken = generateRefreshToken({ id: user._id, sid: sessionKey });
@@ -96,8 +120,7 @@ const login = async ({ email, password }, sessionMeta = {}) => {
   });
   user.refreshToken = hashToken(refreshToken);
   await user.save({ validateBeforeSave: false });
-  await redis.set(`session:${user._id}:${sessionKey}`, "1", "EX", USER_SESSION_TTL_SECONDS);
-  await redis.set(`session:${user._id}`, "1", "EX", USER_SESSION_TTL_SECONDS);
+  await rememberSession(user._id, sessionKey);
 
   const userObj = user.toObject();
   delete userObj.password;

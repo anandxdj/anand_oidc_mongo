@@ -10,7 +10,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
 
 # Install dependencies (production only)
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --prod
 
 # Copy application code
 COPY src ./src
@@ -21,10 +21,10 @@ COPY server.js .
 # Stage 2: Production stage
 FROM node:22-alpine
 
-WORKDIR /app
-
-# Install dumb-init for proper signal handling
+# Install dumb-init for proper signal handling (before COPY to cache properly)
 RUN apk add --no-cache dumb-init
+
+WORKDIR /app
 
 # Copy from builder
 COPY --from=builder /app/node_modules ./node_modules
@@ -46,7 +46,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD node -e "require('http').get('http://localhost:4000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 # Use dumb-init to handle signals properly
-ENTRYPOINT ["/sbin/dumb-init", "--"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 # Start the application
 CMD ["node", "server.js"]
