@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getApiBaseUrl } from "@/lib/api";
+import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export function CreateProjectWizard() {
@@ -53,7 +53,7 @@ export function CreateProjectWizard() {
     try {
       const res = await fetch(`${getApiBaseUrl()}/api/projects`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         credentials: "include",
         body: JSON.stringify({
           name: name.trim(),

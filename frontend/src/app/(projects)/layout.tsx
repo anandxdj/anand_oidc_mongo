@@ -1,8 +1,11 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { ProjectsLogoutButton } from "./logout-button";
 import { buttonVariants } from "@/components/ui/button";
-import { fetchApi } from "@/lib/server-api";
+import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -11,21 +14,32 @@ const nav = [
   { href: "/user/profile", label: "Profile" },
 ] as const;
 
-export default async function ProjectsConsoleLayout({
+export default function ProjectsConsoleLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let role = "";
-  try {
-    const res = await fetchApi("/api/auth/me");
-    if (res.ok) {
-      const json = (await res.json()) as { data?: { role?: string } };
-      role = json.data?.role || "";
-    }
-  } catch {
-    role = "";
-  }
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
+          credentials: "include",
+          headers: getAuthHeaders(),
+        });
+        if (!res.ok) return;
+        const json = (await res.json()) as { data?: { role?: string } };
+        if (!cancelled) setRole(json.data?.role || "");
+      } catch {
+        if (!cancelled) setRole("");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const hasAdminAccess = role === "admin" || role === "superadmin";
   const hasSuperadminAccess = role === "superadmin";

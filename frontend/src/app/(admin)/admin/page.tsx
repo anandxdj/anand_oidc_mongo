@@ -9,6 +9,7 @@ import {
   type AdminStats,
   type ApiJson,
   getApiBaseUrl,
+  getAuthHeaders,
 } from "@/lib/api";
 import { KeyRound, Radio, Users, Boxes } from "lucide-react";
 
@@ -21,7 +22,10 @@ export default function AdminOverviewPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${api}/api/admin/stats`, { credentials: "include" });
+        const res = await fetch(`${api}/api/admin/stats`, {
+          credentials: "include",
+          headers: getAuthHeaders(),
+        });
         const json = (await res.json()) as ApiJson<AdminStats>;
         if (!res.ok || json.success === false) {
           if (!cancelled) setError(json.message ?? "Could not load admin stats.");

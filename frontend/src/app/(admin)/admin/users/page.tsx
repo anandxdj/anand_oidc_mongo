@@ -38,6 +38,7 @@ import {
   type AdminUsersPageResponse,
   type ApiJson,
   getApiBaseUrl,
+  getAuthHeaders,
 } from "@/lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -74,7 +75,10 @@ export default function AdminUsersPage() {
     setListError(null);
     try {
       const qs = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
-      const res = await fetch(`${api}/api/admin/users?${qs}`, { credentials: "include" });
+      const res = await fetch(`${api}/api/admin/users?${qs}`, {
+        credentials: "include",
+        headers: getAuthHeaders(),
+      });
       const json = (await res.json()) as ApiJson<AdminUsersPageResponse>;
       if (!res.ok || json.success === false) {
         setListError(json.message ?? "Could not load users.");
@@ -102,6 +106,7 @@ export default function AdminUsersPage() {
       try {
         const res = await fetch(`${api}/api/admin/users/${userId}/authorized-apps`, {
           credentials: "include",
+          headers: getAuthHeaders(),
         });
         const json = (await res.json()) as ApiJson<AdminAuthorizedAppsResponse>;
         if (!res.ok || json.success === false) {
@@ -140,7 +145,7 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch(
         `${api}/api/admin/users/${sheetUser._id}/consents/${encodeURIComponent(revokeTarget.clientId)}`,
-        { method: "DELETE", credentials: "include" },
+        { method: "DELETE", credentials: "include", headers: getAuthHeaders() },
       );
       const json = (await res.json()) as ApiJson<unknown>;
       if (!res.ok || json.success === false) {

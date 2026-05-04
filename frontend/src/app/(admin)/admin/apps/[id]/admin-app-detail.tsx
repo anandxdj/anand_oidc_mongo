@@ -38,6 +38,7 @@ import {
   type AdminOAuthClientRow,
   type ApiJson,
   getApiBaseUrl,
+  getAuthHeaders,
 } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
@@ -75,6 +76,7 @@ export function AdminAppDetail() {
     try {
       const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(clientId)}`, {
         credentials: "include",
+        headers: getAuthHeaders(),
       });
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
@@ -110,7 +112,7 @@ export function AdminAppDetail() {
       const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
         method: "PATCH",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ suspended: true, suspendedReason: reason }),
       });
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
@@ -136,7 +138,7 @@ export function AdminAppDetail() {
       const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
         method: "PATCH",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ suspended: false }),
       });
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
