@@ -39,7 +39,8 @@ export default function AdminAppsPage() {
         });
         const json = (await res.json()) as ApiJson<AdminOAuthClientRow[]>;
         if (!res.ok || json.success === false) {
-          if (!cancelled) setError(json.message ?? "Could not load applications.");
+          if (!cancelled)
+            setError(json.message ?? "Could not load applications.");
           return;
         }
         if (!cancelled) setRows(json.data ?? []);
@@ -56,7 +57,9 @@ export default function AdminAppsPage() {
     return (
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Applications</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Applications
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             All OAuth clients registered on the platform.
           </p>
@@ -92,7 +95,8 @@ export default function AdminAppsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Applications</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          All OAuth clients registered on the platform. Open a row for suspension controls.
+          All OAuth clients registered on the platform. Open a row for
+          suspension controls.
         </p>
       </div>
 
@@ -111,7 +115,10 @@ export default function AdminAppsPage() {
           <TableBody>
             {!rows.length ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-sm text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="h-24 text-center text-sm text-muted-foreground"
+                >
                   No OAuth clients yet.
                 </TableCell>
               </TableRow>
@@ -125,7 +132,10 @@ export default function AdminAppsPage() {
                     className="border-border/60 cursor-pointer transition-colors hover:bg-muted/30"
                   >
                     <TableCell className="font-medium">
-                      <Link href={href} className="text-foreground no-underline hover:underline">
+                      <Link
+                        href={href}
+                        className="text-foreground no-underline hover:underline"
+                      >
                         {r.clientName}
                       </Link>
                       <div className="mt-1 font-mono text-xs text-muted-foreground lg:hidden">
@@ -133,7 +143,10 @@ export default function AdminAppsPage() {
                       </div>
                     </TableCell>
                     <TableCell className="hidden max-w-[220px] truncate font-mono text-xs text-muted-foreground lg:table-cell">
-                      <Link href={href} className="no-underline hover:underline">
+                      <Link
+                        href={href}
+                        className="no-underline hover:underline"
+                      >
                         {r.clientId}
                       </Link>
                     </TableCell>
@@ -143,7 +156,9 @@ export default function AdminAppsPage() {
                     <TableCell className="hidden text-sm text-muted-foreground xl:table-cell">
                       {r.projectId?.name ?? "—"}
                       {r.projectId?.isDefault ? (
-                        <span className="ml-1 text-xs text-muted-foreground/70">· default</span>
+                        <span className="ml-1 text-xs text-muted-foreground/70">
+                          · default
+                        </span>
                       ) : null}
                     </TableCell>
                     <TableCell>

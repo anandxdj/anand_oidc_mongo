@@ -28,7 +28,8 @@ export default function AdminOverviewPage() {
         });
         const json = (await res.json()) as ApiJson<AdminStats>;
         if (!res.ok || json.success === false) {
-          if (!cancelled) setError(json.message ?? "Could not load admin stats.");
+          if (!cancelled)
+            setError(json.message ?? "Could not load admin stats.");
           return;
         }
         if (json.data && !cancelled) setStats(json.data);

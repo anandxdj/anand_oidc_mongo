@@ -63,18 +63,24 @@ export default function AdminUsersPage() {
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [sheetUser, setSheetUser] = useState<AdminUserRow | null>(null);
-  const [appsPayload, setAppsPayload] = useState<AdminAuthorizedAppsResponse | null>(null);
+  const [appsPayload, setAppsPayload] =
+    useState<AdminAuthorizedAppsResponse | null>(null);
   const [appsError, setAppsError] = useState<string | null>(null);
   const [appsLoading, setAppsLoading] = useState(false);
 
-  const [revokeTarget, setRevokeTarget] = useState<AdminAuthorizedApp | null>(null);
+  const [revokeTarget, setRevokeTarget] = useState<AdminAuthorizedApp | null>(
+    null,
+  );
   const [revokeBusy, setRevokeBusy] = useState(false);
 
   const loadUsers = useCallback(async () => {
     setListLoading(true);
     setListError(null);
     try {
-      const qs = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
+      const qs = new URLSearchParams({
+        page: String(page),
+        limit: String(PAGE_SIZE),
+      });
       const res = await fetch(`${api}/api/admin/users?${qs}`, {
         credentials: "include",
         headers: getAuthHeaders(),
@@ -104,10 +110,13 @@ export default function AdminUsersPage() {
       setAppsError(null);
       setAppsPayload(null);
       try {
-        const res = await fetch(`${api}/api/admin/users/${userId}/authorized-apps`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
-        });
+        const res = await fetch(
+          `${api}/api/admin/users/${userId}/authorized-apps`,
+          {
+            credentials: "include",
+            headers: getAuthHeaders(),
+          },
+        );
         const json = (await res.json()) as ApiJson<AdminAuthorizedAppsResponse>;
         if (!res.ok || json.success === false) {
           setAppsError(json.message ?? "Could not load authorized apps.");
@@ -196,7 +205,9 @@ export default function AdminUsersPage() {
               Page {data.page} of {totalPages}
             </span>
             <span className="text-border">·</span>
-            <span className="tabular-nums">{data.total.toLocaleString()} users</span>
+            <span className="tabular-nums">
+              {data.total.toLocaleString()} users
+            </span>
           </div>
         ) : null}
       </div>
@@ -235,7 +246,10 @@ export default function AdminUsersPage() {
               ))
             ) : !data.items.length ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-sm text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-sm text-muted-foreground"
+                >
                   No users found.
                 </TableCell>
               </TableRow>
@@ -253,7 +267,12 @@ export default function AdminUsersPage() {
                     {formatTs(u.createdAt)}
                   </TableCell>
                   <TableCell className="text-end">
-                    <Button type="button" variant="outline" size="sm" onClick={() => openSheet(u)}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => openSheet(u)}
+                    >
                       Authorized apps
                     </Button>
                   </TableCell>
@@ -292,13 +311,19 @@ export default function AdminUsersPage() {
       ) : null}
 
       <Sheet open={sheetOpen} onOpenChange={onSheetOpenChange}>
-        <SheetContent side="right" className="flex w-full flex-col gap-0 sm:max-w-md">
+        <SheetContent
+          side="right"
+          className="flex w-full flex-col gap-0 sm:max-w-md"
+        >
           <SheetHeader className="border-b border-border/80 p-4 text-left">
             <SheetTitle>Authorized apps</SheetTitle>
             <SheetDescription>
               {sheetUser ? (
                 <>
-                  Consents for <span className="font-medium text-foreground">{sheetUser.email}</span>
+                  Consents for{" "}
+                  <span className="font-medium text-foreground">
+                    {sheetUser.email}
+                  </span>
                 </>
               ) : (
                 "Select a user from the table."
@@ -318,7 +343,9 @@ export default function AdminUsersPage() {
                 <AlertDescription>{appsError}</AlertDescription>
               </Alert>
             ) : appsPayload && !appsPayload.apps.length ? (
-              <p className="text-sm text-muted-foreground">No authorized applications for this user.</p>
+              <p className="text-sm text-muted-foreground">
+                No authorized applications for this user.
+              </p>
             ) : appsPayload ? (
               <ul className="flex flex-col gap-3">
                 {appsPayload.apps.map((app) => (
@@ -331,7 +358,9 @@ export default function AdminUsersPage() {
                         <p className="truncate text-sm font-medium text-foreground">
                           {app.clientName ?? app.clientId}
                         </p>
-                        <p className="font-mono text-xs text-muted-foreground">{app.clientId}</p>
+                        <p className="font-mono text-xs text-muted-foreground">
+                          {app.clientId}
+                        </p>
                       </div>
                       {app.clientSuspended ? (
                         <Badge variant="destructive" className="shrink-0">
@@ -340,10 +369,14 @@ export default function AdminUsersPage() {
                       ) : null}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground/80">Scope:</span>{" "}
+                      <span className="font-medium text-foreground/80">
+                        Scope:
+                      </span>{" "}
                       {app.scope?.trim() ? app.scope : "—"}
                     </p>
-                    <p className="text-xs text-muted-foreground">Granted {formatTs(app.grantedAt)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Granted {formatTs(app.grantedAt)}
+                    </p>
                     <div className="pt-1">
                       <Button
                         type="button"
@@ -362,16 +395,21 @@ export default function AdminUsersPage() {
         </SheetContent>
       </Sheet>
 
-      <AlertDialog open={Boolean(revokeTarget)} onOpenChange={(o) => !o && setRevokeTarget(null)}>
+      <AlertDialog
+        open={Boolean(revokeTarget)}
+        onOpenChange={(o) => !o && setRevokeTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Revoke access?</AlertDialogTitle>
             <AlertDialogDescription>
-              This removes the user&apos;s consent and deletes outstanding access tokens for{" "}
+              This removes the user&apos;s consent and deletes outstanding
+              access tokens for{" "}
               <span className="font-medium text-foreground">
                 {revokeTarget?.clientName ?? revokeTarget?.clientId}
               </span>
-              . The user can authorize again later if the client is still trusted.
+              . The user can authorize again later if the client is still
+              trusted.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

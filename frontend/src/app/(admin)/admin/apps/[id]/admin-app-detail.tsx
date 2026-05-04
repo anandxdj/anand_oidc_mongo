@@ -74,10 +74,13 @@ export function AdminAppDetail() {
     if (!clientId) return;
     setLoadError(null);
     try {
-      const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(clientId)}`, {
-        credentials: "include",
-        headers: getAuthHeaders(),
-      });
+      const res = await fetch(
+        `${api}/api/admin/apps/${encodeURIComponent(clientId)}`,
+        {
+          credentials: "include",
+          headers: getAuthHeaders(),
+        },
+      );
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
         setLoadError(json.message ?? "Could not load client.");
@@ -109,12 +112,15 @@ export function AdminAppDetail() {
     }
     setSuspendBusy(true);
     try {
-      const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        body: JSON.stringify({ suspended: true, suspendedReason: reason }),
-      });
+      const res = await fetch(
+        `${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+          body: JSON.stringify({ suspended: true, suspendedReason: reason }),
+        },
+      );
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
         toast.error(json.message ?? "Could not suspend client.");
@@ -135,12 +141,15 @@ export function AdminAppDetail() {
     if (!row) return;
     setUnsuspendBusy(true);
     try {
-      const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        body: JSON.stringify({ suspended: false }),
-      });
+      const res = await fetch(
+        `${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+          body: JSON.stringify({ suspended: false }),
+        },
+      );
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
         toast.error(json.message ?? "Could not restore client.");
@@ -182,14 +191,19 @@ export function AdminAppDetail() {
       <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-6 py-12">
         <Link
           href="/admin/apps"
-          className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "w-fit gap-1 no-underline")}
+          className={cn(
+            buttonVariants({ variant: "ghost", size: "sm" }),
+            "w-fit gap-1 no-underline",
+          )}
         >
           <ArrowLeft className="size-4" aria-hidden />
           All applications
         </Link>
         <Alert variant="destructive">
           <AlertTitle>Something went wrong</AlertTitle>
-          <AlertDescription>{loadError ?? "Client not found."}</AlertDescription>
+          <AlertDescription>
+            {loadError ?? "Client not found."}
+          </AlertDescription>
         </Alert>
       </main>
     );
@@ -209,19 +223,33 @@ export function AdminAppDetail() {
             <ArrowLeft className="size-4" aria-hidden />
             All applications
           </Link>
-          <h1 className="text-2xl font-semibold tracking-tight">{row.clientName}</h1>
-          <p className="mt-1 font-mono text-xs text-muted-foreground">{row.clientId}</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {row.clientName}
+          </h1>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">
+            {row.clientId}
+          </p>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           <Badge variant={suspended ? "destructive" : "secondary"}>
             {suspended ? "Suspended" : "Active"}
           </Badge>
           {suspended ? (
-            <Button type="button" variant="outline" size="sm" onClick={() => setUnsuspendOpen(true)}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setUnsuspendOpen(true)}
+            >
               Restore client
             </Button>
           ) : (
-            <Button type="button" variant="destructive" size="sm" onClick={() => setSuspendOpen(true)}>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => setSuspendOpen(true)}
+            >
               Suspend client
             </Button>
           )}
@@ -231,13 +259,18 @@ export function AdminAppDetail() {
       <Card className="border-border/80 bg-card/50">
         <CardHeader>
           <CardTitle className="text-base">Redirect URIs</CardTitle>
-          <CardDescription>Registered callback URLs for this client.</CardDescription>
+          <CardDescription>
+            Registered callback URLs for this client.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ul className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
             {row.redirectUris?.length ? (
               row.redirectUris.map((u) => (
-                <li key={u} className="break-all rounded-md border border-border/60 bg-muted/30 px-3 py-2">
+                <li
+                  key={u}
+                  className="break-all rounded-md border border-border/60 bg-muted/30 px-3 py-2"
+                >
                   {u}
                 </li>
               ))
@@ -262,13 +295,21 @@ export function AdminAppDetail() {
             </p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Owner</p>
-            <p className="mt-1 text-foreground/90">{row.ownerId?.name ?? "—"}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Owner
+            </p>
+            <p className="mt-1 text-foreground/90">
+              {row.ownerId?.name ?? "—"}
+            </p>
             <p className="text-muted-foreground">{row.ownerId?.email ?? "—"}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Project</p>
-            <p className="mt-1 text-foreground/90">{row.projectId?.name ?? "—"}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Project
+            </p>
+            <p className="mt-1 text-foreground/90">
+              {row.projectId?.name ?? "—"}
+            </p>
             {row.projectId?.isDefault ? (
               <p className="text-xs text-muted-foreground">Default project</p>
             ) : null}
@@ -277,7 +318,9 @@ export function AdminAppDetail() {
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Suspension
             </p>
-            <p className="mt-1 text-foreground/90">{formatTs(row.suspendedAt)}</p>
+            <p className="mt-1 text-foreground/90">
+              {formatTs(row.suspendedAt)}
+            </p>
             {row.suspendedReason ? (
               <p className="mt-2 whitespace-pre-wrap rounded-md border border-border/60 bg-muted/30 p-2 text-xs text-muted-foreground">
                 {row.suspendedReason}
@@ -285,11 +328,15 @@ export function AdminAppDetail() {
             ) : null}
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Created</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Created
+            </p>
             <p className="mt-1 text-foreground/90">{formatTs(row.createdAt)}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Updated</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Updated
+            </p>
             <p className="mt-1 text-foreground/90">{formatTs(row.updatedAt)}</p>
           </div>
         </CardContent>
@@ -300,8 +347,8 @@ export function AdminAppDetail() {
           <DialogHeader>
             <DialogTitle>Suspend client</DialogTitle>
             <DialogDescription>
-              Users will be blocked from completing new authorizations for this application. Provide an
-              internal reason (required).
+              Users will be blocked from completing new authorizations for this
+              application. Provide an internal reason (required).
             </DialogDescription>
           </DialogHeader>
           <Textarea
@@ -312,10 +359,19 @@ export function AdminAppDetail() {
             className="resize-none"
           />
           <DialogFooter showCloseButton={false}>
-            <Button type="button" variant="outline" onClick={() => setSuspendOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setSuspendOpen(false)}
+            >
               Cancel
             </Button>
-            <Button type="button" variant="destructive" disabled={suspendBusy} onClick={submitSuspend}>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={suspendBusy}
+              onClick={submitSuspend}
+            >
               {suspendBusy ? "Saving…" : "Confirm suspend"}
             </Button>
           </DialogFooter>
@@ -327,13 +383,19 @@ export function AdminAppDetail() {
           <AlertDialogHeader>
             <AlertDialogTitle>Restore this client?</AlertDialogTitle>
             <AlertDialogDescription>
-              Suspension will be cleared and the client may accept new authorizations again (subject to
-              your policies).
+              Suspension will be cleared and the client may accept new
+              authorizations again (subject to your policies).
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={unsuspendBusy}>Cancel</AlertDialogCancel>
-            <Button type="button" disabled={unsuspendBusy} onClick={() => void submitUnsuspend()}>
+            <AlertDialogCancel disabled={unsuspendBusy}>
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              type="button"
+              disabled={unsuspendBusy}
+              onClick={() => void submitUnsuspend()}
+            >
               {unsuspendBusy ? "Restoring…" : "Restore client"}
             </Button>
           </AlertDialogFooter>
