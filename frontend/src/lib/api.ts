@@ -1,5 +1,6 @@
 /** Cookie on the Next.js origin so middleware can detect a recent sign-in (API auth cookies live on the API host). */
 export const UI_SESSION_COOKIE = "oidc_ui_session";
+export const ACCESS_TOKEN_STORAGE_KEY = "oidc_access_token";
 
 export const UI_SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 7;
 
@@ -14,6 +15,26 @@ export function uiSessionCookieValue(): string {
 
 export function clearUiSessionCookieValue(): string {
   return `${UI_SESSION_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`;
+}
+
+export function getStoredAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+}
+
+export function setStoredAccessToken(token: string): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+}
+
+export function clearStoredAccessToken(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+}
+
+export function getAuthHeaders(): HeadersInit {
+  const token = getStoredAccessToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export type UserProfile = {

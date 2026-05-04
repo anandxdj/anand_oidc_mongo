@@ -21,7 +21,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { getApiBaseUrl, uiSessionCookieValue } from "@/lib/api";
+import { getApiBaseUrl, setStoredAccessToken, uiSessionCookieValue } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 /** Only allow redirect back to the OIDC server (same origin as API), on /oauth paths. */
@@ -122,6 +122,7 @@ export function LoginForm() {
         success?: boolean;
         message?: string;
         data?: {
+          accessToken?: string;
           user?: {
             role?: string;
           };
@@ -132,6 +133,9 @@ export function LoginForm() {
         return;
       }
 
+      if (json.data?.accessToken) {
+        setStoredAccessToken(json.data.accessToken);
+      }
       document.cookie = uiSessionCookieValue();
 
       const oauthNext = safeOAuthReturnTo(returnToRaw, apiBase);

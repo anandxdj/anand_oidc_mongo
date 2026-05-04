@@ -13,7 +13,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { clearUiSessionCookieValue, getApiBaseUrl } from "@/lib/api";
+import {
+  clearStoredAccessToken,
+  clearUiSessionCookieValue,
+  getApiBaseUrl,
+  getAuthHeaders,
+} from "@/lib/api";
 
 export function ProjectsLogoutButton() {
   const router = useRouter();
@@ -23,10 +28,12 @@ export function ProjectsLogoutButton() {
       await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
         method: "POST",
         credentials: "include",
+        headers: getAuthHeaders(),
       });
     } catch {
       /* ignore */
     }
+    clearStoredAccessToken();
     document.cookie = clearUiSessionCookieValue();
     router.push("/login");
     router.refresh();

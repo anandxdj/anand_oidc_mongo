@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getApiBaseUrl } from "@/lib/api";
+import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { LayoutDashboard, Lock, Shield, ShieldOff, Users } from "lucide-react";
 
@@ -39,7 +39,10 @@ export default function AdminLayout({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, { credentials: "include" });
+        const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
+          credentials: "include",
+          headers: getAuthHeaders(),
+        });
         if (res.status === 401 || res.status === 403) {
           if (!cancelled) setState("unauthenticated");
           return;

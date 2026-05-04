@@ -21,7 +21,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { getApiBaseUrl, type ApiJson, type UserAuthorizedAppRow } from "@/lib/api";
+import { getApiBaseUrl, getAuthHeaders, type ApiJson, type UserAuthorizedAppRow } from "@/lib/api";
 
 function formatTs(value?: string): string {
   if (!value) return "Unknown";
@@ -47,6 +47,7 @@ export function UserAuthorizedAppsPanel({ initialApps }: { initialApps: UserAuth
     try {
       const res = await fetch(`${getApiBaseUrl()}/api/auth/authorized-apps`, {
         credentials: "include",
+        headers: getAuthHeaders(),
       });
       const json = (await res.json()) as ApiJson<UserAuthorizedAppRow[]>;
       if (!res.ok || !json.data) {
@@ -66,6 +67,7 @@ export function UserAuthorizedAppsPanel({ initialApps }: { initialApps: UserAuth
       const res = await fetch(`${getApiBaseUrl()}/api/auth/authorized-apps/${encodeURIComponent(clientId)}`, {
         method: "DELETE",
         credentials: "include",
+        headers: getAuthHeaders(),
       });
       const json = (await res.json()) as ApiJson<{ revoked: boolean; clientId: string }>;
       if (!res.ok || json.success === false) {
