@@ -36,6 +36,9 @@ COPY package.json .
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+RUN chown -R nodejs:nodejs /app \
+    && chmod 600 /app/cert/private-key.pem \
+    && chmod 644 /app/cert/public-key.pub
 USER nodejs
 
 # Expose port (default 4000)
