@@ -25,6 +25,9 @@ services:
       - app_network
 
   backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: anand_id_backend:latest
     container_name: backend
     restart: always
