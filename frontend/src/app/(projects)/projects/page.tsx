@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import { clientFetch } from "@/lib/client-api";
+import { getAuthHeaders, type ProjectRow } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { FolderKanban, Settings2 } from "lucide-react";
 

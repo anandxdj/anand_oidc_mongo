@@ -19,10 +19,11 @@ import {
   type AdminOAuthClientRow,
   type ApiJson,
   getApiBaseUrl,
-  getAuthHeaders,
 } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
+
+import { clientFetch } from "@/lib/client-api";
 
 export default function AdminAppsPage() {
   const api = getApiBaseUrl();
@@ -33,7 +34,7 @@ export default function AdminAppsPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await clientFetch("/api/admin/apps", {
+        const res = await clientFetch(`/api/admin/apps`, {
         });
         const json = (await res.json()) as ApiJson<AdminOAuthClientRow[]>;
         if (!res.ok || json.success === false) {

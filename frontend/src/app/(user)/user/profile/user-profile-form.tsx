@@ -2,6 +2,7 @@
 
 import { clientFetch } from "@/lib/client-api";
 import { ProfileSettingsCard } from "./profile-settings-card";
+import { type UserProfile, type ApiJson, getAuthHeaders } from "@/lib/api";
 
 type ImagekitAuth = {
   token: string;

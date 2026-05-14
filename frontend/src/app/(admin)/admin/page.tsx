@@ -11,6 +11,7 @@ import {
   getApiBaseUrl,
   getAuthHeaders,
 } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { KeyRound, Radio, Users, Boxes } from "lucide-react";
 
 export default function AdminOverviewPage() {

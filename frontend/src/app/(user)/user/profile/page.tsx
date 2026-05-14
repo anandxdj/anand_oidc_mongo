@@ -16,6 +16,7 @@ import {
 import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 import { UserProfileForm } from "./user-profile-form";
+import { type UserProfile, type ApiJson } from "@/lib/api";
 
 export default function UserProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);

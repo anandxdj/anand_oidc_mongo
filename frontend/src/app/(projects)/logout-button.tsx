@@ -19,6 +19,7 @@ import {
   getApiBaseUrl,
   getAuthHeaders,
 } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 
 export function ProjectsLogoutButton() {
   const router = useRouter();

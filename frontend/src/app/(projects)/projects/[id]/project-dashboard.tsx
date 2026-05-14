@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { clientFetch } from "@/lib/client-api";
+import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 type ClientRow = {
@@ -105,9 +106,9 @@ export function ProjectDashboard({ projectId }: { projectId: string }) {
     setLoadError(null);
     try {
       const [pr, cl] = await Promise.all([
-        clientFetch("/api/projects/${projectId}", {
+        clientFetch(`/api/projects/${projectId}`, {
         }),
-        clientFetch("/api/projects/${projectId}/clients", {
+        clientFetch(`/api/projects/${projectId}/clients`, {
         }),
       ]);
       const pj = (await pr.json()) as ApiJson<ProjectMeta>;
@@ -143,7 +144,7 @@ export function ProjectDashboard({ projectId }: { projectId: string }) {
     if (nameError || redirectError) return;
     setBusy(true);
     try {
-      const res = await clientFetch("/api/projects/${projectId}/clients", {
+      const res = await clientFetch(`/api/projects/${projectId}/clients`, {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({

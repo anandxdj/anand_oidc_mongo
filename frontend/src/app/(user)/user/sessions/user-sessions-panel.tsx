@@ -22,6 +22,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { clientFetch } from "@/lib/client-api";
+import { type UserSessionRow, type ApiJson } from "@/lib/api";
 
 function formatTs(value?: string): string {
   if (!value) return "Unknown";
@@ -59,7 +60,7 @@ export function UserSessionsPanel({ initialSessions }: { initialSessions: UserSe
   const revokeSession = async (sessionId: string) => {
     setRevokingId(sessionId);
     try {
-      const res = await clientFetch("/api/auth/sessions/${sessionId}", {
+      const res = await clientFetch(`/api/auth/sessions/${sessionId}`, {
         method: "DELETE",
       });
       const json = (await res.json()) as ApiJson<{ id: string }>;

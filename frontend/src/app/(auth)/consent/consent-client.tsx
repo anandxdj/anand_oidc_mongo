@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { clientFetch } from "@/lib/client-api";
+import { getApiBaseUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 type ConsentContext = {

@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { clientFetch } from "@/lib/client-api";
+import { type UserProfile, getAuthHeaders } from "@/lib/api";
 
 export function SettingsForm({ user }: { user: UserProfile }) {
   const router = useRouter();

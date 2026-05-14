@@ -22,6 +22,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { clientFetch } from "@/lib/client-api";
+import { type UserAuthorizedAppRow, getAuthHeaders, type ApiJson } from "@/lib/api";
 
 function formatTs(value?: string): string {
   if (!value) return "Unknown";
@@ -62,7 +63,7 @@ export function UserAuthorizedAppsPanel({ initialApps }: { initialApps: UserAuth
   const revokeApp = async (clientId: string) => {
     setRevokingClientId(clientId);
     try {
-      const res = await clientFetch("/api/auth/authorized-apps/${encodeURIComponent(clientId)}", {
+      const res = await clientFetch(`/api/auth/authorized-apps/${encodeURIComponent(clientId)}`, {
         method: "DELETE",
       });
       const json = (await res.json()) as ApiJson<{ revoked: boolean; clientId: string }>;

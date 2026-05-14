@@ -38,10 +38,11 @@ import {
   type AdminOAuthClientRow,
   type ApiJson,
   getApiBaseUrl,
-  getAuthHeaders,
 } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
+
+import { clientFetch } from "@/lib/client-api";
 
 function formatTs(value?: string | null) {
   if (!value) return "—";
@@ -74,21 +75,8 @@ export function AdminAppDetail() {
     if (!clientId) return;
     setLoadError(null);
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      const res = await fetch(
-        `${api}/api/admin/apps/${encodeURIComponent(clientId)}`,
-        {
-          credentials: "include",
-          headers: getAuthHeaders(),
-        },
-      );
-=======
-=======
->>>>>>> 97b179f2908678af57f391f3e8dbd92e0518f6ed
-      const res = await clientFetch("/api/admin/apps/${encodeURIComponent(clientId)}", {
+      const res = await clientFetch(`/api/admin/apps/${encodeURIComponent(clientId)}`, {
       });
->>>>>>> 97b179f2908678af57f391f3e8dbd92e0518f6ed
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
         setLoadError(json.message ?? "Could not load client.");
@@ -102,7 +90,7 @@ export function AdminAppDetail() {
     } finally {
       setBooting(false);
     }
-  }, [api, clientId]);
+  }, [clientId]);
 
   useEffect(() => {
     setBooting(true);
@@ -120,26 +108,10 @@ export function AdminAppDetail() {
     }
     setSuspendBusy(true);
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      const res = await fetch(
-        `${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-          body: JSON.stringify({ suspended: true, suspendedReason: reason }),
-        },
-      );
-=======
-=======
->>>>>>> 97b179f2908678af57f391f3e8dbd92e0518f6ed
-      const res = await clientFetch("/api/admin/apps/${encodeURIComponent(row.clientId)}", {
+      const res = await clientFetch(`/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ suspended: true, suspendedReason: reason }),
       });
->>>>>>> 97b179f2908678af57f391f3e8dbd92e0518f6ed
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
         toast.error(json.message ?? "Could not suspend client.");
@@ -160,26 +132,10 @@ export function AdminAppDetail() {
     if (!row) return;
     setUnsuspendBusy(true);
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      const res = await fetch(
-        `${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-          body: JSON.stringify({ suspended: false }),
-        },
-      );
-=======
-=======
->>>>>>> 97b179f2908678af57f391f3e8dbd92e0518f6ed
-      const res = await clientFetch("/api/admin/apps/${encodeURIComponent(row.clientId)}", {
+      const res = await clientFetch(`/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ suspended: false }),
       });
->>>>>>> 97b179f2908678af57f391f3e8dbd92e0518f6ed
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
         toast.error(json.message ?? "Could not restore client.");

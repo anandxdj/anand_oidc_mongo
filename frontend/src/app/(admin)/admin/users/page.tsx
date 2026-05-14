@@ -38,7 +38,6 @@ import {
   type AdminUsersPageResponse,
   type ApiJson,
   getApiBaseUrl,
-  getAuthHeaders,
 } from "@/lib/api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -53,6 +52,8 @@ function formatTs(value?: string | null) {
     timeStyle: "short",
   });
 }
+
+import { clientFetch } from "@/lib/client-api";
 
 export default function AdminUsersPage() {
   const api = getApiBaseUrl();
@@ -81,9 +82,7 @@ export default function AdminUsersPage() {
         page: String(page),
         limit: String(PAGE_SIZE),
       });
-      const res = await fetch(`${api}/api/admin/users?${qs}`, {
-        credentials: "include",
-        headers: getAuthHeaders(),
+      const res = await clientFetch(`/api/admin/users?${qs}`, {
       });
       const json = (await res.json()) as ApiJson<AdminUsersPageResponse>;
       if (!res.ok || json.success === false) {
@@ -98,10 +97,12 @@ export default function AdminUsersPage() {
     } finally {
       setListLoading(false);
     }
-  }, [api, page]);
+  }, [page]);
 
   useEffect(() => {
-    void loadUsers();
+    queueMicrotask(() => {
+      void loadUsers();
+    });
   }, [loadUsers]);
 
   const loadApps = useCallback(
@@ -110,13 +111,8 @@ export default function AdminUsersPage() {
       setAppsError(null);
       setAppsPayload(null);
       try {
-        const res = await fetch(
-          `${api}/api/admin/users/${userId}/authorized-apps`,
-          {
-            credentials: "include",
-            headers: getAuthHeaders(),
-          },
-        );
+        const res = await clientFetch(`/api/admin/users/${userId}/authorized-apps`, {
+        });
         const json = (await res.json()) as ApiJson<AdminAuthorizedAppsResponse>;
         if (!res.ok || json.success === false) {
           setAppsError(json.message ?? "Could not load authorized apps.");
@@ -129,7 +125,7 @@ export default function AdminUsersPage() {
         setAppsLoading(false);
       }
     },
-    [api],
+    [],
   );
 
   function openSheet(user: AdminUserRow) {

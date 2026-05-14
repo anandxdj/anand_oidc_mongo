@@ -1,4 +1,4 @@
-import { getApiBaseUrl, clearUiSessionCookieValue } from "./api";
+import { getApiBaseUrl, clearUiSessionCookieValue, setStoredAccessToken } from "./api";
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -25,22 +25,33 @@ export async function clientFetch(
   const apiBase = getApiBaseUrl();
   const url = path.startsWith("http") ? path : apiBase + path;
 
+  // Use a mutable headers record for easier updates during retry
+  const headersRecord = {
+    "Content-Type": "application/json",
+    ...init.headers,
+  } as Record<string, string>;
+
   const options: RequestInit = {
     ...init,
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...init.headers,
-    },
+    headers: headersRecord,
   };
 
   const response = await fetch(url, options);
 
   // If unauthorized, try to refresh
-  if (response.status === 401 && !path.includes("/api/auth/login") && !path.includes("/api/auth/refresh-token")) {
+  if (
+    response.status === 401 &&
+    !path.includes("/api/auth/login") &&
+    !path.includes("/api/auth/refresh-token")
+  ) {
     if (isRefreshing) {
       return new Promise((resolve) => {
-        subscribeTokenRefresh(() => {
+        subscribeTokenRefresh((newToken) => {
+          // If the original request had an Authorization header, update it
+          if (headersRecord["Authorization"]) {
+            headersRecord["Authorization"] = `Bearer ${newToken}`;
+          }
           resolve(fetch(url, options));
         });
       });
@@ -55,9 +66,21 @@ export async function clientFetch(
       });
 
       if (refreshRes.ok) {
-        isRefreshing = false;
-        onRefreshed("refreshed");
-        return fetch(url, options);
+        const json = await refreshRes.json();
+        const newToken = json.data?.accessToken;
+
+        if (newToken) {
+          setStoredAccessToken(newToken);
+
+          // Update the Authorization header for the retry
+          if (headersRecord["Authorization"]) {
+            headersRecord["Authorization"] = `Bearer ${newToken}`;
+          }
+
+          isRefreshing = false;
+          onRefreshed(newToken);
+          return fetch(url, options);
+        }
       }
     } catch (err) {
       console.error("Refresh token failed", err);
