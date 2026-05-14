@@ -21,7 +21,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getApiBaseUrl, getAuthHeaders, type ProjectRow } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 import { FolderKanban } from "lucide-react";
 
@@ -33,9 +33,7 @@ export default function ProjectsListPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${getApiBaseUrl()}/api/projects`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/projects", {
         });
         const json = (await res.json()) as {
           success?: boolean;

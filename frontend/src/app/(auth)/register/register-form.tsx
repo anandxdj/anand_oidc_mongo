@@ -22,7 +22,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { getApiBaseUrl } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 const STEPS = ["Your name", "Email", "Password", "Review"] as const;
@@ -140,7 +140,7 @@ export function RegisterForm() {
       if (country.trim().length === 2) {
         body.country = country.trim().toUpperCase();
       }
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/register`, {
+      const res = await clientFetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

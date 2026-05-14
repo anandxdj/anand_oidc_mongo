@@ -75,9 +75,7 @@ export default function AdminUsersPage() {
     setListError(null);
     try {
       const qs = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
-      const res = await fetch(`${api}/api/admin/users?${qs}`, {
-        credentials: "include",
-        headers: getAuthHeaders(),
+      const res = await clientFetch("/api/admin/users?${qs}", {
       });
       const json = (await res.json()) as ApiJson<AdminUsersPageResponse>;
       if (!res.ok || json.success === false) {
@@ -104,9 +102,7 @@ export default function AdminUsersPage() {
       setAppsError(null);
       setAppsPayload(null);
       try {
-        const res = await fetch(`${api}/api/admin/users/${userId}/authorized-apps`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/admin/users/${userId}/authorized-apps", {
         });
         const json = (await res.json()) as ApiJson<AdminAuthorizedAppsResponse>;
         if (!res.ok || json.success === false) {
@@ -145,7 +141,6 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch(
         `${api}/api/admin/users/${sheetUser._id}/consents/${encodeURIComponent(revokeTarget.clientId)}`,
-        { method: "DELETE", credentials: "include", headers: getAuthHeaders() },
       );
       const json = (await res.json()) as ApiJson<unknown>;
       if (!res.ok || json.success === false) {

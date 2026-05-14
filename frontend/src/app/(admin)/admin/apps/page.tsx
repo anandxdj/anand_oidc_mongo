@@ -33,9 +33,7 @@ export default function AdminAppsPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${api}/api/admin/apps`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/admin/apps", {
         });
         const json = (await res.json()) as ApiJson<AdminOAuthClientRow[]>;
         if (!res.ok || json.success === false) {

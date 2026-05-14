@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 const userNav = [
@@ -36,9 +36,7 @@ export default function UserLayout({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/auth/me", {
         });
         if (res.status === 401 || res.status === 403) {
           if (!cancelled) setState("unauthenticated");

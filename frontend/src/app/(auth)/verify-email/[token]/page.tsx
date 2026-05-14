@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getApiBaseUrl } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 type Props = { params: Promise<{ token: string }> };

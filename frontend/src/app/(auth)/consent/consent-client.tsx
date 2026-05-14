@@ -16,7 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getApiBaseUrl } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 type ConsentContext = {
@@ -96,10 +96,9 @@ export function ConsentClient() {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/oauth/consent`, {
+      const res = await clientFetch("/api/oauth/consent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ transaction_id: transactionId, decision }),
       });
       const json = (await res.json()) as {

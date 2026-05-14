@@ -22,9 +22,7 @@ export default function AdminOverviewPage() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${api}/api/admin/stats`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/admin/stats", {
         });
         const json = (await res.json()) as ApiJson<AdminStats>;
         if (!res.ok || json.success === false) {

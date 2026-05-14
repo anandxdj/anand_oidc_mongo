@@ -74,9 +74,7 @@ export function AdminAppDetail() {
     if (!clientId) return;
     setLoadError(null);
     try {
-      const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(clientId)}`, {
-        credentials: "include",
-        headers: getAuthHeaders(),
+      const res = await clientFetch("/api/admin/apps/${encodeURIComponent(clientId)}", {
       });
       const json = (await res.json()) as ApiJson<AdminOAuthClientRow>;
       if (!res.ok || json.success === false) {
@@ -109,9 +107,8 @@ export function AdminAppDetail() {
     }
     setSuspendBusy(true);
     try {
-      const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
+      const res = await clientFetch("/api/admin/apps/${encodeURIComponent(row.clientId)}", {
         method: "PATCH",
-        credentials: "include",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ suspended: true, suspendedReason: reason }),
       });
@@ -135,9 +132,8 @@ export function AdminAppDetail() {
     if (!row) return;
     setUnsuspendBusy(true);
     try {
-      const res = await fetch(`${api}/api/admin/apps/${encodeURIComponent(row.clientId)}`, {
+      const res = await clientFetch("/api/admin/apps/${encodeURIComponent(row.clientId)}", {
         method: "PATCH",
-        credentials: "include",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ suspended: false }),
       });

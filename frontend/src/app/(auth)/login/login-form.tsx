@@ -21,7 +21,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { getApiBaseUrl, setStoredAccessToken, uiSessionCookieValue } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 /** Only allow redirect back to the OIDC server (same origin as API), on /oauth paths. */
@@ -109,10 +109,9 @@ export function LoginForm() {
     setLoading(true);
     const apiBase = getApiBaseUrl();
     try {
-      const res = await fetch(`${apiBase}/api/auth/login`, {
+      const res = await clientFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({
           email: email.trim().toLowerCase(),
           password,

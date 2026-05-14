@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 export function CreateProjectWizard() {
@@ -51,10 +51,9 @@ export function CreateProjectWizard() {
     if (nameErr || agreedErr) return;
     setLoading(true);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/projects`, {
+      const res = await clientFetch("/api/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        credentials: "include",
         body: JSON.stringify({
           name: name.trim(),
           companyName: companyName.trim(),

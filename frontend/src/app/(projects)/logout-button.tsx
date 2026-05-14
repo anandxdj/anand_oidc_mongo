@@ -25,10 +25,8 @@ export function ProjectsLogoutButton() {
 
   const logout = async () => {
     try {
-      await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
+      await clientFetch("/api/auth/logout", {
         method: "POST",
-        credentials: "include",
-        headers: getAuthHeaders(),
       });
     } catch {
       /* ignore */
