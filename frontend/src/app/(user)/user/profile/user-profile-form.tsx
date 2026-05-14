@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiBaseUrl, getAuthHeaders, type ApiJson, type UserProfile } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { ProfileSettingsCard } from "./profile-settings-card";
 
 type ImagekitAuth = {
@@ -16,9 +16,7 @@ type UploadedAsset = {
 };
 
 async function uploadToImagekit(file: File): Promise<string> {
-  const authRes = await fetch(`${getApiBaseUrl()}/api/auth/imagekit/upload-auth`, {
-    credentials: "include",
-    headers: getAuthHeaders(),
+  const authRes = await clientFetch("/api/auth/imagekit/upload-auth", {
   });
   const authJson = (await authRes.json()) as ApiJson<ImagekitAuth>;
   if (!authRes.ok || !authJson.data) {
@@ -56,10 +54,9 @@ export function UserProfileForm({ user }: { user: UserProfile }) {
     company?: string;
     country?: string;
   }) => {
-    const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
+    const res = await clientFetch("/api/auth/me", {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-      credentials: "include",
       body: JSON.stringify(data),
     });
     const json = (await res.json()) as ApiJson<UserProfile>;

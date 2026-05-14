@@ -15,14 +15,8 @@ const readAccessToken = (req) => {
 
 // Authenticates using the short-lived access token (Authorization or httpOnly cookie)
 const authenticate = async (req, res, next) => {
-  const clearAuth = () => {
-    res.clearCookie("accessToken", { path: "/" });
-    res.clearCookie("refreshToken", { path: "/" });
-  };
-
   const token = readAccessToken(req);
   if (!token) {
-    clearAuth();
     throw ApiError.unauthorized("Not authenticated");
   }
 
@@ -30,7 +24,8 @@ const authenticate = async (req, res, next) => {
   try {
     decoded = verifyAccessToken(token);
   } catch (err) {
-    clearAuth();
+    // If access token is expired, we DO NOT clear cookies here.
+    // This allows the frontend to call /refresh-token using the still-valid refreshToken cookie.
     throw ApiError.unauthorized("Session expired or invalid");
   }
 
@@ -38,16 +33,18 @@ const authenticate = async (req, res, next) => {
     ? `session:${decoded.id}:${decoded.sid}`
     : `session:${decoded.id}`;
 
-  // Check Redis whitelist for either scoped session key or legacy single-session key.
   const isWhitelisted = await redis.get(sessionRedisKey);
   if (!isWhitelisted) {
-    clearAuth();
+    // Session revoked — okay to clear
+    res.clearCookie("accessToken", { path: "/" });
+    res.clearCookie("refreshToken", { path: "/" });
     throw ApiError.unauthorized("Session expired or revoked");
   }
 
   const user = await User.findById(decoded.id);
   if (!user) {
-    clearAuth();
+    res.clearCookie("accessToken", { path: "/" });
+    res.clearCookie("refreshToken", { path: "/" });
     throw ApiError.unauthorized("User no longer exists");
   }
 

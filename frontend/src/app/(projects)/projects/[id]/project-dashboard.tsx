@@ -32,7 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 type ClientRow = {
@@ -105,13 +105,9 @@ export function ProjectDashboard({ projectId }: { projectId: string }) {
     setLoadError(null);
     try {
       const [pr, cl] = await Promise.all([
-        fetch(`${api}/api/projects/${projectId}`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        clientFetch("/api/projects/${projectId}", {
         }),
-        fetch(`${api}/api/projects/${projectId}/clients`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        clientFetch("/api/projects/${projectId}/clients", {
         }),
       ]);
       const pj = (await pr.json()) as ApiJson<ProjectMeta>;
@@ -147,10 +143,9 @@ export function ProjectDashboard({ projectId }: { projectId: string }) {
     if (nameError || redirectError) return;
     setBusy(true);
     try {
-      const res = await fetch(`${api}/api/projects/${projectId}/clients`, {
+      const res = await clientFetch("/api/projects/${projectId}/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        credentials: "include",
         body: JSON.stringify({
           clientName: clientName.trim(),
           redirectUris,
@@ -191,7 +186,6 @@ export function ProjectDashboard({ projectId }: { projectId: string }) {
     try {
       const res = await fetch(
         `${api}/api/projects/${projectId}/clients/${encodeURIComponent(clientId)}/roll-secret`,
-        { method: "POST", credentials: "include", headers: getAuthHeaders() },
       );
       const json = (await res.json()) as ApiJson<{ clientId: string; clientSecret: string }>;
       if (!res.ok || json.success === false) {

@@ -1,18 +1,4 @@
 services:
-  mongodb:
-    image: mongo:8.0
-    container_name: mongodb
-    restart: always
-    ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
-    volumes:
-      - mongo_data:/data/db
-    networks:
-      - app_network
-
   redis:
     image: redis:7-alpine
     container_name: redis
@@ -35,10 +21,8 @@ services:
       - "4000:4000"
     env_file: .env
     environment:
-      MONGODB_URI: mongodb://admin:password@mongodb:27017/admin
       REDIS_URL: redis://redis:6379
     depends_on:
-      - mongodb
       - redis
     networks:
       - app_network
@@ -48,5 +32,4 @@ networks:
     driver: bridge
 
 volumes:
-  mongo_data:
   redis_data:

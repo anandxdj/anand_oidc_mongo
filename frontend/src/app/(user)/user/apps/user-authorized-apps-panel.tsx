@@ -21,7 +21,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { getApiBaseUrl, getAuthHeaders, type ApiJson, type UserAuthorizedAppRow } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 
 function formatTs(value?: string): string {
   if (!value) return "Unknown";
@@ -45,9 +45,7 @@ export function UserAuthorizedAppsPanel({ initialApps }: { initialApps: UserAuth
   const loadApps = async (withLoading = true) => {
     if (withLoading) setLoading(true);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/authorized-apps`, {
-        credentials: "include",
-        headers: getAuthHeaders(),
+      const res = await clientFetch("/api/auth/authorized-apps", {
       });
       const json = (await res.json()) as ApiJson<UserAuthorizedAppRow[]>;
       if (!res.ok || !json.data) {
@@ -64,10 +62,8 @@ export function UserAuthorizedAppsPanel({ initialApps }: { initialApps: UserAuth
   const revokeApp = async (clientId: string) => {
     setRevokingClientId(clientId);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/authorized-apps/${encodeURIComponent(clientId)}`, {
+      const res = await clientFetch("/api/auth/authorized-apps/${encodeURIComponent(clientId)}", {
         method: "DELETE",
-        credentials: "include",
-        headers: getAuthHeaders(),
       });
       const json = (await res.json()) as ApiJson<{ revoked: boolean; clientId: string }>;
       if (!res.ok || json.success === false) {

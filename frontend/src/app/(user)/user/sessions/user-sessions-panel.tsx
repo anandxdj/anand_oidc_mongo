@@ -21,7 +21,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { getApiBaseUrl, getAuthHeaders, type ApiJson, type UserSessionRow } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 
 function formatTs(value?: string): string {
   if (!value) return "Unknown";
@@ -40,9 +40,7 @@ export function UserSessionsPanel({ initialSessions }: { initialSessions: UserSe
       setLoading(true);
     }
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/sessions`, {
-        credentials: "include",
-        headers: getAuthHeaders(),
+      const res = await clientFetch("/api/auth/sessions", {
       });
       const json = (await res.json()) as ApiJson<UserSessionRow[]>;
       if (!res.ok || !json.data) {
@@ -61,10 +59,8 @@ export function UserSessionsPanel({ initialSessions }: { initialSessions: UserSe
   const revokeSession = async (sessionId: string) => {
     setRevokingId(sessionId);
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/sessions/${sessionId}`, {
+      const res = await clientFetch("/api/auth/sessions/${sessionId}", {
         method: "DELETE",
-        credentials: "include",
-        headers: getAuthHeaders(),
       });
       const json = (await res.json()) as ApiJson<{ id: string }>;
       if (!res.ok || json.success === false) {

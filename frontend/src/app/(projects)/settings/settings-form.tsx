@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getApiBaseUrl, getAuthHeaders, type UserProfile } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 
 export function SettingsForm({ user }: { user: UserProfile }) {
   const router = useRouter();
@@ -42,10 +42,9 @@ export function SettingsForm({ user }: { user: UserProfile }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
+      const res = await clientFetch("/api/auth/me", {
         method: "PUT",
         headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-        credentials: "include",
         body: JSON.stringify({
           name,
           profilePictureUrl,

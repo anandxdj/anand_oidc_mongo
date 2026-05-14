@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { ProjectsLogoutButton } from "./logout-button";
 import { buttonVariants } from "@/components/ui/button";
-import { getApiBaseUrl, getAuthHeaders } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -25,9 +25,7 @@ export default function ProjectsConsoleLayout({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/auth/me", {
         });
         if (!res.ok) return;
         const json = (await res.json()) as { data?: { role?: string } };

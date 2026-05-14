@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getApiBaseUrl, getAuthHeaders, type ApiJson, type UserProfile } from "@/lib/api";
+import { clientFetch } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 import { UserProfileForm } from "./user-profile-form";
 
@@ -26,9 +26,7 @@ export default function UserProfilePage() {
 
     (async () => {
       try {
-        const res = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
-          credentials: "include",
-          headers: getAuthHeaders(),
+        const res = await clientFetch("/api/auth/me", {
         });
         const json = (await res.json()) as ApiJson<UserProfile>;
 
